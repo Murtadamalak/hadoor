@@ -1,14 +1,9 @@
 workflows:
-  ios-build-adhoc:
-    name: Build iOS IPA (Ad-Hoc Signed)
+  ios-build:
+    name: Build iOS IPA
     instance_type: mac_mini_m1
     max_build_duration: 60
     environment:
-      ios_signing:
-        provisioning_profiles:
-          - adhoc_profile
-        certificates:
-          - ios_dev_cert
       vars:
         BUNDLE_ID: "com.example.hadoor"
       xcode: latest
@@ -35,10 +30,10 @@ workflows:
           pod install --repo-update || pod install
           cd ..
           
-      - name: Build iOS IPA (Ad-Hoc Signed)
+      - name: Build iOS IPA (No Codesign)
         script: |
           flutter build ipa \
-            --export-method=ad-hoc \
+            --no-codesign \
             --verbose
             
       - name: Check build output
