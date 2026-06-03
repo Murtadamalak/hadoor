@@ -58,9 +58,10 @@ jobs:
           ls -la build/ios || true
           ls -la build/ios/ipa || true
           find build -name "*.ipa" -type f 2>/dev/null || echo "No IPA found"
-
+          
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
           name: ios-ipa
-          path: build/ios/ipa/*.ipa
+          path: build/ios/ipa/
+          if-no-files-found: warn
