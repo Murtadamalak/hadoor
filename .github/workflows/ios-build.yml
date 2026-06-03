@@ -33,16 +33,31 @@ jobs:
         run: |
           sudo gem install cocoapods
           cd ios || exit 0
-          pod install --repo-update || true
+          pod install --repo-update || pod install || true
+          cd ..
+
+      - name: Check iOS project structure
+        run: |
+          ls -la ios/
+          ls -la ios/Runner.xcodeproj/ || true
+          cat pubspec.yaml | grep -A 5 "flutter:" || echo "Flutter section not found"
 
       - name: Build IPA (no codesign)
         run: |
-          flutter build ipa --no-codesign -v
+          flutter build ipa --no-codesign -v 2>&1 | tail -100
+
+      - name: Check for build errors
+        if: failure()
+        run: |
+          echo "Build failed. Checking build directory..."
+          find build -name "*.log" -type f -exec cat {} \; 2>/dev/null || echo "No build logs found"
+          ls -laR build/ios/build/Logs 2>/dev/null || echo "No Xcode logs found"
 
       - name: List build output
         run: |
           ls -la build/ios || true
           ls -la build/ios/ipa || true
+          find build -name "*.ipa" -type f 2>/dev/null || echo "No IPA found"
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
