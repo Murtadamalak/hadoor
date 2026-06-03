@@ -30,3 +30,23 @@ Installing on an iPhone from Windows:
 
 Notes:
 - The workflow builds the `.ipa` with `--no-codesign`. If you need an Ad‑Hoc or App Store signed `.ipa`, you must provide code signing credentials and modify the workflow accordingly or use a CI provider's signing features.
+
+## Build Web Application
+
+A GitHub Actions workflow automatically builds the Flutter web version on every push to `main`. The web app is automatically deployed to GitHub Pages.
+
+### Access the Web App:
+- Your web app will be available at: `https://Murtadamalak.github.io/hadoor/`
+
+### Build Web Locally (Optional):
+```bash
+flutter config --enable-web
+flutter pub get
+flutter build web --release
+# Output will be in build/web/
+```
+
+### Web Features:
+- Same Flutter codebase for iOS, Android, and Web
+- Responsive design works on desktop and mobile browsers
+- No additional setup required — automatic deployment via GitHub Actions
