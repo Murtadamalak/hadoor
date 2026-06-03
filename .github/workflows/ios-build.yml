@@ -53,15 +53,21 @@ jobs:
           find build -name "*.log" -type f -exec cat {} \; 2>/dev/null || echo "No build logs found"
           ls -laR build/ios/build/Logs 2>/dev/null || echo "No Xcode logs found"
 
-      - name: List build output
+      - name: Find and list IPA files
         run: |
-          ls -la build/ios || true
-          ls -la build/ios/ipa || true
-          find build -name "*.ipa" -type f 2>/dev/null || echo "No IPA found"
+          echo "Searching for IPA files..."
+          find build -name "*.ipa" -type f
+          find . -name "*.ipa" -type f -path "*/build/*" 2>/dev/null || echo "No IPA found in build"
+          
+      - name: Copy IPA to artifacts directory
+        run: |
+          mkdir -p /tmp/ipa_artifacts
+          find build -name "*.ipa" -type f -exec cp {} /tmp/ipa_artifacts/ \;
+          ls -la /tmp/ipa_artifacts/ || echo "No IPA copied"
           
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
           name: ios-ipa
-          path: build/ios/ipa/
+          path: /tmp/ipa_artifacts/
           if-no-files-found: warn

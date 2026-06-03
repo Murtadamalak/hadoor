@@ -44,7 +44,7 @@ workflows:
     artifacts:
       - build/ios/ipa/**/*.ipa
     publishing:
-      email:
+      email: murtadalgobory@gmail.com
         recipients:
           - $DEVELOPER_EMAIL
         notify:
