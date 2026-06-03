@@ -4,72 +4,45 @@ workflows:
     instance_type: mac_mini_m1
     max_build_duration: 60
     environment:
-      ios_signing:
-        provisioning_profiles: []
-        certificates: []
       vars:
         BUNDLE_ID: "com.example.hadoor"
-        APP_STORE_CONNECT_ISSUER_ID: $APP_STORE_CONNECT_ISSUER_ID
-        APP_STORE_CONNECT_KEY_ID: $APP_STORE_CONNECT_KEY_ID
-        APP_STORE_CONNECT_PRIVATE_KEY: $APP_STORE_CONNECT_PRIVATE_KEY
-      xcode: 15.0
-      ruby: 3.2.0
+      xcode: latest
     triggering:
       events:
         - push
         - pull_request
-      branch:
-        include:
-          - main
-          - develop
     scripts:
       - name: Set up Flutter
         script: |
           set -e
-          echo "Installing Flutter..."
-          git clone https://github.com/flutter/flutter.git --depth 1 --branch stable $HOME/flutter || true
-          export PATH="$HOME/flutter/bin:$PATH"
+          echo "Setting up Flutter..."
+          flutter upgrade
           flutter doctor -v
-          flutter pub global activate fvm
           
       - name: Get project dependencies
         script: |
-          export PATH="$HOME/flutter/bin:$PATH"
           flutter pub get
           
       - name: Install CocoaPods dependencies
         script: |
           cd ios
+          pod repo update || true
           pod install --repo-update || pod install
           cd ..
           
       - name: Build iOS IPA (No Codesign)
         script: |
-          export PATH="$HOME/flutter/bin:$PATH"
           flutter build ipa \
             --no-codesign \
-            --build-number=$BUILD_NUMBER \
-            -v
+            --verbose
             
       - name: Check build output
         script: |
-          set -e
           echo "Checking for IPA file..."
-          ls -laR build/ios/ipa/ || echo "IPA directory not found"
+          ls -la build/ios/ipa/ || echo "IPA directory not found"
           find build -name "*.ipa" -type f || echo "No IPA files found"
-          
-      - name: Prepare artifacts
-        script: |
-          set -e
-          mkdir -p $CM_BUILD_DIR/artifacts
-          if [ -d "build/ios/ipa" ]; then
-            cp -r build/ios/ipa/* $CM_BUILD_DIR/artifacts/ || true
-          fi
-          ls -la $CM_BUILD_DIR/artifacts/ || echo "No artifacts to copy"
     artifacts:
-      - $CM_BUILD_DIR/artifacts/**/*.ipa
       - build/ios/ipa/**/*.ipa
-      - flutter_build.log
     publishing:
       email:
         recipients:
