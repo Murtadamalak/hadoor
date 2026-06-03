@@ -1,6 +1,4 @@
 {
-  "cleanUrls": true,
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/build/web/$1" }
-  ]
+  "outputDirectory": "build/web",
+  "cleanUrls": true
 }
