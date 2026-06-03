@@ -1,0 +1,79 @@
+name: hadoor
+description: تطبيق تسجيل حضور الطلاب الجامعيين
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # قاعدة البيانات
+  sqflite: ^2.3.3
+  path: ^1.9.0
+
+  # مسح الباركود
+  mobile_scanner: ^5.2.3
+
+  # تصدير PDF
+  pdf: ^3.10.8
+  printing: ^5.13.1
+
+  # تصدير Excel
+  excel: ^4.0.6
+
+  # مشاركة الملفات وحفظها
+  share_plus: ^12.0.2
+  path_provider: ^2.1.3
+  open_filex: ^4.3.4
+
+  # الصوت
+  audioplayers: ^6.1.0
+
+  # الخطوط
+  google_fonts: ^6.2.1
+
+  # إدارة الحالة
+  provider: ^6.1.2
+
+  # حفظ الجلسة
+  shared_preferences: ^2.3.2
+
+  # الوقت والتاريخ
+  intl: ^0.19.0
+
+  # اختيار الملفات
+  file_picker: ^8.1.2
+
+  # فتح روابط خارجية (واتساب)
+  url_launcher: ^6.3.0
+
+  # أيقونات إضافية
+  cupertino_icons: ^1.0.8
+  flutter_animate: ^4.5.0
+  lottie: ^3.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/fonts/
+    - assets/
+
+
+  fonts:
+    - family: IBM
+      fonts:
+        - asset: assets/fonts/IBM.ttf
