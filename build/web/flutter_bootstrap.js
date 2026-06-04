@@ -43,7 +43,7 @@ _flutter.loader.load({
     fontFallbackBaseUrl: "assets/fonts/"
   },
   serviceWorkerSettings: {
-    serviceWorkerVersion: "923352668",
+    serviceWorkerVersion: "3142966655",
   },
   onEntrypointLoaded: async function(engineInitializer) {
     let appRunner = await engineInitializer.initializeEngine();
