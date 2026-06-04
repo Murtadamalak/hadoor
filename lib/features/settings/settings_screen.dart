@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:convert';
 import 'dart:io';
 import '../../core/database/database_helper.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/utils/file_saver_helper.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -244,20 +244,16 @@ class SettingsScreen extends StatelessWidget {
     try {
       final data = await DatabaseHelper.instance.exportAllData();
       final json = jsonEncode(data);
-      final dir = await getApplicationDocumentsDirectory();
       final now = DateTime.now();
       final fileName =
           'hadoor_backup_${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}.json';
-      final file = File('${dir.path}/$fileName');
-      await file.writeAsString(json);
-      await Share.shareXFiles([
-        XFile(file.path),
-      ], text: 'نسخة احتياطية — تطبيق حضور');
+      final bytes = utf8.encode(json);
+      await saveFileBytes(bytes, fileName, mimeType: 'application/json');
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('فشل التصدير: $e', style: TextStyle()),
+            content: Text('فشل التصدير: $e', style: const TextStyle(fontFamily: 'IBM')),
             backgroundColor: AppTheme.errorRed,
           ),
         );
@@ -315,13 +311,21 @@ class SettingsScreen extends StatelessWidget {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['json'],
+      withData: true,
     );
 
     if (result == null || result.files.isEmpty) return;
 
     try {
-      final file = File(result.files.first.path!);
-      final content = await file.readAsString();
+      final String content;
+      final file = result.files.first;
+      if (kIsWeb || file.path == null) {
+        final bytes = file.bytes!;
+        content = utf8.decode(bytes);
+      } else {
+        final ioFile = File(file.path!);
+        content = await ioFile.readAsString();
+      }
       final data = jsonDecode(content) as Map<String, dynamic>;
       await DatabaseHelper.instance.importAllData(data, replace: confirmed);
       if (context.mounted) {

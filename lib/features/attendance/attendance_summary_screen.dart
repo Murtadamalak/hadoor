@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:excel/excel.dart' as xl;
-import 'dart:io';
 import 'package:provider/provider.dart';
 import '../../core/database/database_helper.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/providers/student_provider.dart';
 import '../students/student_profile_screen.dart';
+import '../../core/utils/file_saver_helper.dart';
 
 class AttendanceSummaryScreen extends StatefulWidget {
   final int sessionId;
@@ -727,20 +726,13 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
       );
 
       final bytes = await pdf.save();
-      final dir = await getTemporaryDirectory();
       final safeSubjectName = widget.subject['name']
           .toString()
           .replaceAll(RegExp(r'[^\w\s]+'), '_');
       final fileName =
           'report_${safeSubjectName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
-      final file = File('${dir.path}/$fileName');
 
-      await file.writeAsBytes(bytes);
-
-      await Share.shareXFiles(
-        [XFile(file.path)],
-        text: 'تقرير حضور: ${widget.subject['name']}',
-      );
+      await saveFileBytes(bytes, fileName, mimeType: 'application/pdf');
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -794,15 +786,15 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
         _setCell(sheet, 8 + i, 4, r['status'] ?? 'حاضر');
       }
 
-      final dir = await getTemporaryDirectory();
       final fileName = 'hadoor_${s['name']}_$_today.xlsx'.replaceAll('/', '-');
-      final file = File('${dir.path}/$fileName');
       final bytes = excel.save();
       if (bytes != null) {
-        await file.writeAsBytes(bytes);
-        await Share.shareXFiles([
-          XFile(file.path),
-        ], text: 'تقرير حضور: ${s['name']}');
+        final uint8Bytes = Uint8List.fromList(bytes);
+        await saveFileBytes(
+          uint8Bytes,
+          fileName,
+          mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        );
       }
     } catch (e) {
       if (mounted) {

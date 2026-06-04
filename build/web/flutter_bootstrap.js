@@ -34,11 +34,19 @@ addEventListener("message", eventListener);
 if (!window._flutter) {
   window._flutter = {};
 }
-_flutter.buildConfig = {"engineRevision":"ef0cd000916d64fa0c5d09cc809fa7ad244a5767","builds":[{"compileTarget":"dart2js","renderer":"canvaskit","mainJsPath":"main.dart.js"}]};
+_flutter.buildConfig = {"engineRevision":"ef0cd000916d64fa0c5d09cc809fa7ad244a5767","builds":[{"compileTarget":"dart2js","renderer":"canvaskit","mainJsPath":"main.dart.js"}],"useLocalCanvasKit":true};
 
 
 _flutter.loader.load({
+  config: {
+    canvasKitBaseUrl: "canvaskit/",
+    fontFallbackBaseUrl: "assets/fonts/"
+  },
   serviceWorkerSettings: {
-    serviceWorkerVersion: "469232771"
+    serviceWorkerVersion: "923352668",
+  },
+  onEntrypointLoaded: async function(engineInitializer) {
+    let appRunner = await engineInitializer.initializeEngine();
+    await appRunner.runApp();
   }
 });

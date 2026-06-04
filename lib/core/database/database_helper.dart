@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -13,14 +14,23 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDatabase() async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'hadoor.db');
+    final String path;
+    if (kIsWeb) {
+      path = 'hadoor.db';
+    } else {
+      final dbPath = await getDatabasesPath();
+      path = join(dbPath, 'hadoor.db');
+    }
     return openDatabase(
       path,
       version: 1,
       onCreate: _onCreate,
       onOpen: (db) async {
-        await db.execute('PRAGMA foreign_keys = ON');
+        if (!kIsWeb) {
+          try {
+            await db.execute('PRAGMA foreign_keys = ON');
+          } catch (_) {}
+        }
         try {
           await db.execute('ALTER TABLE attendance_records ADD COLUMN status TEXT DEFAULT "حاضر"');
         } catch (_) {}
