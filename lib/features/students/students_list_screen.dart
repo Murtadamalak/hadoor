@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/providers/student_provider.dart';
+import '../../core/providers/subject_provider.dart';
 import '../../core/theme/app_theme.dart';
 import 'student_profile_screen.dart';
 
@@ -14,6 +15,16 @@ class StudentsListScreen extends StatefulWidget {
 
 class _StudentsListScreenState extends State<StudentsListScreen> {
   String _search = '';
+  String? _selectedMealId;
+
+  @override
+  void initState() {
+    super.initState();
+    final activeSubject = context.read<SubjectProvider>().activeSubject;
+    if (activeSubject != null) {
+      _selectedMealId = activeSubject['id'].toString();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +37,14 @@ class _StudentsListScreenState extends State<StudentsListScreen> {
       ),
       body: Consumer<StudentProvider>(
         builder: (context, provider, _) {
+          final subjects = context.watch<SubjectProvider>().subjects;
           final filtered = provider.students
-              .where(
-                (s) =>
-                    s['full_name'].toString().toLowerCase().contains(
-                          _search.toLowerCase(),
-                        ) ||
-                    s['university_id'].toString().contains(_search),
-              )
+              .where((s) {
+                final matchesSearch = s['full_name'].toString().toLowerCase().contains(_search.toLowerCase()) ||
+                    s['university_id'].toString().contains(_search);
+                final matchesMeal = _selectedMealId == null || s['meal'].toString() == _selectedMealId;
+                return matchesSearch && matchesMeal;
+              })
               .toList();
 
           return Column(
@@ -61,12 +72,48 @@ class _StudentsListScreenState extends State<StudentsListScreen> {
                   onChanged: (v) => setState(() => _search = v),
                 ),
               ),
+              if (subjects.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: DropdownButtonFormField<String?>(
+                    value: _selectedMealId,
+                    dropdownColor: AppTheme.secondaryBg,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: const InputDecoration(
+                      labelText: 'تصفية حسب الوجبة',
+                      prefixIcon: Icon(
+                        Icons.dining_rounded,
+                        color: AppTheme.textGrey,
+                        size: 20,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                    ),
+                    items: [
+                      const DropdownMenuItem(
+                        value: null,
+                        child: Text('جميع الوجبات', style: TextStyle()),
+                      ),
+                      ...subjects.map(
+                        (s) => DropdownMenuItem(
+                          value: s['id'].toString(),
+                          child: Text(s['name'], style: const TextStyle()),
+                        ),
+                      ),
+                    ],
+                    onChanged: (v) {
+                      setState(() => _selectedMealId = v);
+                    },
+                  ),
+                ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
                     Text(
-                      'إجمالي الطلاب: ${provider.students.length}',
+                      'إجمالي الطلاب: ${filtered.length}',
                       style: TextStyle(
                         fontSize: 13,
                         color: AppTheme.textGrey,
@@ -255,7 +302,27 @@ class _StudentsListScreenState extends State<StudentsListScreen> {
   ) {
     final nameCtrl = TextEditingController(text: student['full_name']);
     final idCtrl = TextEditingController(text: student['university_id']);
-    String selectedStage = student['stage'] ?? 'الأولى';
+    final phoneCtrl = TextEditingController(text: student['phone_number'] ?? '');
+    String? selectedMealId = student['meal']?.toString();
+    final subjects = context.read<SubjectProvider>().subjects;
+    if (selectedMealId != null && !subjects.any((s) => s['id'].toString() == selectedMealId)) {
+      selectedMealId = null;
+    }
+
+    final List<String> stagesList = [
+      'السادس العلمي',
+      'السادس الأدبي',
+      'الثالث المتوسط',
+      'الأولى',
+      'الثانية',
+      'الثالثة',
+      'الرابعة',
+      'الخامسة',
+    ];
+    String selectedStage = student['stage'] ?? 'السادس العلمي';
+    if (!stagesList.contains(selectedStage)) {
+      stagesList.add(selectedStage);
+    }
     String selectedGender = student['gender'] ?? 'ذكر';
     bool isSaving = false;
 
@@ -319,6 +386,52 @@ class _StudentsListScreenState extends State<StudentsListScreen> {
                     ),
                   ),
                   const SizedBox(height: 14),
+                  TextFormField(
+                    controller: phoneCtrl,
+                    style: const TextStyle(color: Colors.white),
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      labelText: 'رقم الهاتف',
+                      filled: true,
+                      fillColor: AppTheme.cardBg,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide:
+                            const BorderSide(color: AppTheme.dividerColor),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  if (subjects.isNotEmpty) ...[
+                    DropdownButtonFormField<String?>(
+                      value: selectedMealId,
+                      dropdownColor: AppTheme.cardBg,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        labelText: 'الوجبة',
+                        filled: true,
+                        fillColor: AppTheme.cardBg,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppTheme.dividerColor),
+                        ),
+                      ),
+                      items: [
+                        const DropdownMenuItem(
+                          value: null,
+                          child: Text('بدون وجبة', style: TextStyle()),
+                        ),
+                        ...subjects.map(
+                          (s) => DropdownMenuItem(
+                            value: s['id'].toString(),
+                            child: Text(s['name'], style: const TextStyle()),
+                          ),
+                        ),
+                      ],
+                      onChanged: (v) => setStateModal(() => selectedMealId = v),
+                    ),
+                    const SizedBox(height: 14),
+                  ],
                   Row(
                     children: [
                       Expanded(
@@ -336,13 +449,7 @@ class _StudentsListScreenState extends State<StudentsListScreen> {
                                   color: AppTheme.dividerColor),
                             ),
                           ),
-                          items: [
-                            'الأولى',
-                            'الثانية',
-                            'الثالثة',
-                            'الرابعة',
-                            'الخامسة'
-                          ]
+                          items: stagesList
                               .map((s) => DropdownMenuItem(
                                     value: s,
                                     child: Text(s, style: TextStyle()),
@@ -394,6 +501,8 @@ class _StudentsListScreenState extends State<StudentsListScreen> {
                                 'university_id': idCtrl.text.trim(),
                                 'stage': selectedStage,
                                 'gender': selectedGender,
+                                'meal': selectedMealId ?? '',
+                                'phone_number': phoneCtrl.text.trim(),
                               });
                               if (context.mounted) Navigator.pop(context);
                             },
@@ -415,10 +524,9 @@ class _StudentsListScreenState extends State<StudentsListScreen> {
                           : Text(
                               'حفظ التعديلات',
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
                             ),
                     ),
                   ),

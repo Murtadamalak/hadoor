@@ -337,12 +337,7 @@ class DatabaseHelper {
       FROM attendance_sessions ats
       JOIN subjects s ON ats.subject_id = s.id
       LEFT JOIN attendance_records ar ON ats.id = ar.session_id AND ar.student_id = ?
-      WHERE ats.subject_id IN (
-        SELECT DISTINCT ats2.subject_id
-        FROM attendance_sessions ats2
-        JOIN attendance_records ar2 ON ats2.id = ar2.session_id
-        WHERE ar2.student_id = ?
-      )
+      WHERE ats.subject_id = (SELECT meal FROM students WHERE id = ?)
       ORDER BY ats.session_date DESC, ats.start_time DESC
       ''',
       [studentId, studentId],

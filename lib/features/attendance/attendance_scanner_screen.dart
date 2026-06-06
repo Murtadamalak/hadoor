@@ -108,6 +108,10 @@ class _AttendanceScannerScreenState extends State<AttendanceScannerScreen>
         await _playSound('error');
         _showNotification('❌ الطالب غير موجود في النظام', AppTheme.errorRed);
         break;
+      case AttendanceScanResult.wrongMeal:
+        await _playSound('error');
+        _showNotification('❌ الطالب ينتمي لوجبة أخرى', AppTheme.errorRed);
+        break;
     }
 
     await Future.delayed(const Duration(seconds: 2));

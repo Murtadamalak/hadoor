@@ -109,7 +109,7 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          isEdit ? 'تعديل المادة' : 'إضافة مادة دراسية',
+          isEdit ? 'تعديل الوجبة' : 'إضافة وجبة جديدة',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -120,14 +120,14 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
           children: [
             _buildField(
               _nameCtrl,
-              'اسم المادة *',
+              'اسم الوجبة *',
               Icons.menu_book_rounded,
               required: true,
             ),
             const SizedBox(height: 16),
             _buildField(
               _codeCtrl,
-              'الوجبة (مثال: صباحي / مسائي)',
+              'رمز الوجبة (مثال: وجبة A / وجبة B)',
               Icons.tag_rounded,
             ),
             const SizedBox(height: 16),
@@ -146,7 +146,7 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
                 child: _isSaving
                     ? const CircularProgressIndicator(color: Colors.white)
                     : Text(
-                        isEdit ? 'حفظ التعديلات' : 'إضافة المادة',
+                        isEdit ? 'حفظ التعديلات' : 'إضافة الوجبة',
                         style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.w700,

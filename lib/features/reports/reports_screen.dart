@@ -193,9 +193,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
             dropdownColor: AppTheme.secondaryBg,
             style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
-              labelText: 'تصفية حسب المادة',
+              labelText: 'تصفية حسب الوجبة',
               prefixIcon: const Icon(
-                Icons.menu_book_rounded,
+                Icons.dining_rounded,
                 color: AppTheme.textGrey,
                 size: 20,
               ),
@@ -207,7 +207,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
             items: [
               DropdownMenuItem(
                 value: null,
-                child: Text('كل المواد', style: TextStyle()),
+                child: Text('جميع الوجبات', style: TextStyle()),
               ),
               ...provider.subjects.map(
                 (s) => DropdownMenuItem(
@@ -324,6 +324,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
             builder: (_) => AttendanceSummaryScreen(
               sessionId: session['id'],
               subject: {
+                'id': session['subject_id'],
                 'name': session['subject_name'],
                 'code': session['subject_code'],
                 'college': session['college'],
@@ -386,7 +387,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   _buildSessionStat(
                     'غائب',
                     (() {
-                      final total = context.read<StudentProvider>().students.length;
+                      final mealIdStr = session['subject_id']?.toString();
+                      final total = context.read<StudentProvider>().students
+                          .where((s) => s['meal']?.toString() == mealIdStr)
+                          .length;
                       final p = session['total_present'] as int? ?? 0;
                       final e = session['total_excused'] as int? ?? 0;
                       final diff = total - (p + e);

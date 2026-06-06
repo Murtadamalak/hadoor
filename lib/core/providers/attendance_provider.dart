@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
 
-enum AttendanceScanResult { success, alreadyRegistered, notFound }
+enum AttendanceScanResult { success, alreadyRegistered, notFound, wrongMeal }
 
 class AttendanceProvider extends ChangeNotifier {
   int? _currentSessionId;
+  int? _currentSessionSubjectId;
   List<Map<String, dynamic>> _currentRecords = [];
   Map<String, dynamic>? _lastRegistered;
   int _totalScanned = 0;
 
   int? get currentSessionId => _currentSessionId;
+  int? get currentSessionSubjectId => _currentSessionSubjectId;
   List<Map<String, dynamic>> get currentRecords => _currentRecords;
   Map<String, dynamic>? get lastRegistered => _lastRegistered;
   int get totalScanned => _totalScanned;
@@ -25,6 +27,7 @@ class AttendanceProvider extends ChangeNotifier {
       'created_at': now.toIso8601String(),
     });
     _currentSessionId = sessionId;
+    _currentSessionSubjectId = subjectId;
     _currentRecords = [];
     _lastRegistered = null;
     _totalScanned = 0;
@@ -42,6 +45,12 @@ class AttendanceProvider extends ChangeNotifier {
     if (student == null) return AttendanceScanResult.notFound;
 
     final studentId = student['id'] as int;
+
+    // التحقق من الانتماء إلى الوجبة الحالية (المادة الحالية)
+    final studentMeal = student['meal']?.toString();
+    if (_currentSessionSubjectId != null && studentMeal != _currentSessionSubjectId.toString()) {
+      return AttendanceScanResult.wrongMeal;
+    }
 
     // التحقق من عدم التسجيل المسبق
     final alreadyIn = await DatabaseHelper.instance.isStudentAttendedInSession(
@@ -90,6 +99,7 @@ class AttendanceProvider extends ChangeNotifier {
 
   void clearSession() {
     _currentSessionId = null;
+    _currentSessionSubjectId = null;
     _currentRecords = [];
     _lastRegistered = null;
     _totalScanned = 0;

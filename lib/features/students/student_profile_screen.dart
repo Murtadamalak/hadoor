@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/database/database_helper.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../core/providers/student_provider.dart';
+import '../../core/providers/subject_provider.dart';
 import '../../core/theme/app_theme.dart';
 
 class StudentProfileScreen extends StatefulWidget {
@@ -288,6 +289,19 @@ class _StudentProfileScreenState extends State<StudentProfileScreen>
   }
 
   Widget _buildDetailsTab(String gender, String stage) {
+    final subjects = context.watch<SubjectProvider>().subjects;
+    final mealIdStr = (_studentDetails?['meal'] ?? '').toString();
+    String mealName = mealIdStr;
+    if (mealIdStr.isNotEmpty) {
+      final match = subjects.firstWhere(
+        (s) => s['id'].toString() == mealIdStr,
+        orElse: () => {},
+      );
+      if (match.isNotEmpty) {
+        mealName = match['name'];
+      }
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -313,9 +327,9 @@ class _StudentProfileScreenState extends State<StudentProfileScreen>
                 _detailRow(Icons.wc_rounded, 'الجنس', gender),
                 const Divider(color: AppTheme.dividerColor),
                 _detailRow(Icons.school_rounded, 'الصف', stage),
-                if ((_studentDetails?['meal'] ?? '').toString().isNotEmpty) ...[
+                if (mealIdStr.isNotEmpty) ...[
                   const Divider(color: AppTheme.dividerColor),
-                  _detailRow(Icons.dining_rounded, 'الوجبة', _studentDetails!['meal'].toString()),
+                  _detailRow(Icons.dining_rounded, 'الوجبة', mealName),
                 ],
                 if ((_studentDetails?['phone_number'] ?? '').toString().isNotEmpty) ...[
                   const Divider(color: AppTheme.dividerColor),

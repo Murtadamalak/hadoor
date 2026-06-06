@@ -53,7 +53,7 @@ class SubjectsScreen extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                        'تم تحديد "${subject['name']}" كمادة حالية',
+                        'تم تحديد "${subject['name']}" كوجبة حالية',
                         style: TextStyle(),
                       ),
                       backgroundColor: AppTheme.successGreen,
@@ -87,7 +87,7 @@ class SubjectsScreen extends StatelessWidget {
         backgroundColor: AppTheme.primaryBlue,
         icon: const Icon(Icons.add_rounded, color: Colors.white),
         label: Text(
-          'إضافة مادة',
+          'إضافة وجبة',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -128,7 +128,7 @@ class SubjectsScreen extends StatelessWidget {
               ),
             ),
             icon: const Icon(Icons.add_rounded),
-            label: Text('أضف مادة الآن', style: TextStyle()),
+            label: Text('أضف وجبة الآن', style: TextStyle()),
           ),
         ],
       ),
@@ -147,7 +147,7 @@ class SubjectsScreen extends StatelessWidget {
         backgroundColor: AppTheme.cardBg,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          'حذف المادة',
+          'حذف الوجبة',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -155,7 +155,7 @@ class SubjectsScreen extends StatelessWidget {
           textDirection: TextDirection.rtl,
         ),
         content: Text(
-          'هل تريد حذف "${subject['name']}"؟ سيتم حذف جميع سجلات الحضور المرتبطة بها.',
+          'هل تريد حذف "${subject['name']}"؟ سيتم حذف جميع سجلات الحضور المرتبطة بهذه الوجبة.',
           style: TextStyle(color: AppTheme.textGrey),
           textDirection: TextDirection.rtl,
         ),

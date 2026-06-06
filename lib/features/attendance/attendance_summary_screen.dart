@@ -50,8 +50,11 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
       final sessionRecords = await DatabaseHelper.instance.getSessionAttendance(
         widget.sessionId,
       );
-      // 2. جلب جميع الطلاب في النظام
-      final allStudents = await DatabaseHelper.instance.getAllStudents();
+      // 2. جلب جميع الطلاب في النظام وتصفيتهم حسب وجبة هذه الجلسة
+      final subjectIdStr = widget.subject['id'].toString();
+      final allStudents = (await DatabaseHelper.instance.getAllStudents())
+          .where((s) => s['meal']?.toString() == subjectIdStr)
+          .toList();
 
       // خريطة لسهولة البحث عن سجل حضور الطالب
       final Map<int, Map<String, dynamic>> sessionMap = {

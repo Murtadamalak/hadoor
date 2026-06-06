@@ -32,7 +32,7 @@ class SettingsScreen extends StatelessWidget {
             icon: Icons.person_rounded,
             children: [
               _buildInfoTile('الاسم', auth.userName, Icons.badge_rounded),
-              _buildInfoTile('المادة', auth.userCollege, Icons.school_rounded),
+              _buildInfoTile('التخصص', auth.userCollege, Icons.school_rounded),
               _buildInfoTile(
                 'المدرسة / المعهد',
                 auth.userUniversity,

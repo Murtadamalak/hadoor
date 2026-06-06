@@ -12,7 +12,7 @@ class AppStrings {
   static const String logout = 'تسجيل الخروج';
 
   // الشاشة الرئيسية
-  static const String subjects = 'المواد الدراسية';
+  static const String subjects = 'الوجبات';
   static const String addStudent = 'إضافة طالب';
   static const String attendance = 'تسجيل الحضور';
   static const String reports = 'التقارير';
@@ -20,17 +20,17 @@ class AppStrings {
   static const String students = 'الطلاب';
 
   // المواد
-  static const String subjectName = 'اسم المادة';
+  static const String subjectName = 'اسم الوجبة';
   static const String subjectCode = 'الوجبة';
   static const String semester = 'الفصل الدراسي';
   static const String academicYear = 'السنة الدراسية';
-  static const String college = 'المادة';
+  static const String college = 'القسم / الفرع';
   static const String university = 'المدرسة / المعهد';
   static const String department = 'الشعبة';
-  static const String addSubject = 'إضافة مادة';
-  static const String noSubjects = 'لا توجد مواد مضافة بعد';
-  static const String selectSubject = 'اختر المادة';
-  static const String activeSubject = 'المادة الحالية';
+  static const String addSubject = 'إضافة وجبة';
+  static const String noSubjects = 'لا توجد وجبات مضافة بعد';
+  static const String selectSubject = 'اختر الوجبة';
+  static const String activeSubject = 'الوجبة الحالية';
 
   // الطلاب
   static const String studentName = 'الاسم الكامل';
@@ -83,5 +83,5 @@ class AppStrings {
   static const String checkInTime = 'وقت الحضور';
   static const String sessionDate = 'التاريخ';
   static const String instructor = 'أستاذ المادة';
-  static const String subject = 'المادة';
+  static const String subject = 'الوجبة';
 }

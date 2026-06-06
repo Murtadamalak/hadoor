@@ -260,7 +260,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'المادة الحالية',
+                              'الوجبة الحالية',
                               style: TextStyle(
                                 fontSize: 11,
                                 color: AppTheme.textGrey,
@@ -284,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           ],
                         )
                       : Text(
-                          'اضغط لاختيار مادة دراسية',
+                          'اضغط لاختيار الوجبة',
                           style: TextStyle(
                             fontSize: 14,
                             color: AppTheme.textGrey,
@@ -363,7 +363,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             Expanded(
               child: _HomeActionButton(
                 icon: Icons.book_rounded,
-                label: 'المواد الدراسية',
+                label: 'الوجبات',
                 color: const Color(0xFF9C27B0),
                 onTap: () => Navigator.push(
                   context,
@@ -415,7 +415,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           textDirection: TextDirection.rtl,
         ),
         content: Text(
-          'يرجى اختيار مادة دراسية أولاً قبل تسجيل الحضور',
+          'يرجى اختيار الوجبة أولاً قبل تسجيل الحضور',
           style: TextStyle(color: AppTheme.textGrey),
           textDirection: TextDirection.rtl,
         ),
@@ -429,7 +429,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               );
             },
             child: Text(
-              'اختر مادة',
+              'اختر الوجبة',
               style: TextStyle(color: AppTheme.primaryBlue),
             ),
           ),
